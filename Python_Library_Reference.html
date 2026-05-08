@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyRef — Python Library Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070a0f;--s1:#0d1117;--s2:#111827;--s3:#1a2235;--border:#1e2d45;--border2:#253352;
+  --text:#cbd5e1;--text2:#64748b;--text3:#94a3b8;--white:#f1f5f9;
+  --accent:#00d4ff;--accent2:#0ea5e9;
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:50px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0;z-index:50}
+.logo{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.95rem;color:var(--white);letter-spacing:-0.5px}
+.logo em{color:var(--accent);font-style:normal}
+.search-wrap{position:relative;margin-left:8px;flex:1;max-width:340px}
+.search-wrap input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:6px 12px 6px 30px;color:var(--white);font-size:.8rem;font-family:'Sora',sans-serif;outline:none;transition:border .15s}
+.search-wrap input:focus{border-color:var(--accent2)}
+.search-wrap input::placeholder{color:var(--text2)}
+.si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text2);font-size:.8rem;pointer-events:none}
+.sdrop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s2);border:1px solid var(--border2);border-radius:8px;max-height:300px;overflow-y:auto;z-index:200;display:none}
+.sdrop.open{display:block}
+.si-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font-size:.78rem;border-bottom:1px solid var(--border)}
+.si-item:last-child{border-bottom:none}
+.si-item:hover{background:rgba(255,255,255,.04)}
+.si-lib{font-size:.62rem;padding:2px 6px;border-radius:3px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0}
+.si-fn{font-family:'IBM Plex Mono',monospace;color:var(--white)}
+.si-desc{color:var(--text2);font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.tbtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--text3);font-size:.75rem;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;white-space:nowrap;margin-left:auto}
+.tbtn:hover{border-color:var(--accent);color:var(--accent)}
+.tbtn+.tbtn{margin-left:6px}
+.tbtn.p{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.4);color:var(--accent)}
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;background:var(--s1);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding-bottom:20px}
+.sb-sec{padding:14px 12px 4px;font-size:.58rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--text2);font-weight:600}
+.lb{display:flex;align-items:center;gap:7px;width:100%;padding:6px 12px;border:none;background:none;color:var(--text2);cursor:pointer;font-size:.78rem;font-family:'Sora',sans-serif;text-align:left;border-left:2px solid transparent;transition:all .12s}
+.lb:hover{background:rgba(255,255,255,.03);color:var(--text3)}
+.lb.active{color:var(--white);background:rgba(255,255,255,.05);border-left-color:var(--lc)}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--lc);flex-shrink:0}
+.lbadge{margin-left:auto;font-size:.58rem;padding:1px 5px;border-radius:3px;background:rgba(255,255,255,.06);color:var(--text2);font-family:'IBM Plex Mono',monospace}
+.fn-list{width:215px;background:var(--s2);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.fl-head{padding:11px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--s2);z-index:10}
+.fl-title{font-size:.73rem;font-weight:600;color:var(--white);margin-bottom:6px}
+.imp-chip{display:inline-flex;align-items:center;gap:5px;background:var(--s3);border:1px solid var(--border2);border-radius:5px;padding:3px 8px;font-size:.66rem;font-family:'IBM Plex Mono',monospace;color:var(--accent2);cursor:pointer;transition:all .15s}
+.imp-chip:hover{border-color:var(--accent);color:var(--accent)}
+.fc-label{padding:8px 12px 3px;font-size:.58rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);font-weight:600}
+.fi{display:flex;align-items:center;gap:6px;width:100%;padding:5px 12px;border:none;background:none;color:var(--text2);cursor:pointer;font-size:.72rem;font-family:'IBM Plex Mono',monospace;text-align:left;border-left:2px solid transparent;transition:all .12s}
+.fi:hover{background:rgba(255,255,255,.03);color:var(--text3)}
+.fi.active{color:var(--accent);background:rgba(0,212,255,.06);border-left-color:var(--accent)}
+.fdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.content{flex:1;overflow-y:auto;background:var(--bg)}
+.ci{max-width:820px;padding:26px 30px;margin:0 auto}
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;padding:2rem}
+.welcome h2{font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.welcome p{color:var(--text2);font-size:.83rem;max-width:400px;line-height:1.7;margin-bottom:2rem}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:580px;width:100%}
+.cc{padding:11px;border:1px solid var(--border);border-radius:8px;background:var(--s1);cursor:pointer;transition:all .18s;text-align:left}
+.cc:hover{border-color:var(--lc);transform:translateY(-1px)}
+.cc-dot{width:7px;height:7px;border-radius:50%;background:var(--lc);margin-bottom:5px}
+.cc-name{font-size:.7rem;font-weight:600;color:var(--white)}
+.cc-count{font-size:.6rem;color:var(--text2);margin-top:2px}
+.loh{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.lo-dot{width:11px;height:11px;border-radius:50%;background:var(--lc)}
+.lo-name{font-size:1.25rem;font-weight:700;color:var(--white)}
+.lo-desc{color:var(--text3);font-size:.82rem;line-height:1.65;margin-bottom:14px}
+.imp-block{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:11px 14px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;line-height:1.85;margin-bottom:18px;overflow-x:auto}
+.fn-ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px}
+.fov{background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:9px 11px;cursor:pointer;transition:border .15s}
+.fov:hover{border-color:var(--lc)}
+.fov-cat{font-size:.58rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;font-weight:600}
+.fov-fn{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--white);margin-bottom:3px}
+.fov-desc{font-size:.66rem;color:var(--text2);line-height:1.4}
+.fov-nd{font-size:.63rem;color:var(--text2);font-style:italic}
+.ext-link{display:inline-flex;align-items:center;gap:5px;text-decoration:none;padding:5px 11px;border-radius:5px;font-size:.73rem;border:1px solid;transition:all .15s;font-family:'Sora',sans-serif}
+.ext-link:hover{opacity:.82;transform:translateY(-1px)}
+.ext-link.p{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.35);color:var(--accent)}
+.ext-link.s{background:rgba(255,255,255,.04);border-color:var(--border2);color:var(--text3)}
+.breadcrumb{font-size:.68rem;font-family:'IBM Plex Mono',monospace;color:var(--text2);margin-bottom:9px}
+.breadcrumb span{color:var(--text3)}
+.fn-name{font-family:'IBM Plex Mono',monospace;font-size:1.1rem;color:var(--white);margin-bottom:11px}
+.fn-name .lp{color:var(--lc)}
+.sig-box{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:13px;overflow-x:auto}
+.sig-box pre{font-family:'IBM Plex Mono',monospace;font-size:.74rem;line-height:1.65;white-space:pre-wrap;word-break:break-all}
+.desc-box{background:var(--s2);border-left:3px solid var(--lc);border-radius:0 8px 8px 0;padding:11px 15px;margin-bottom:16px;font-size:.83rem;line-height:1.7;color:var(--text)}
+.links-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.sh{font-size:.6rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--text2);font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.sh::after{content:'';flex:1;height:1px;background:var(--border)}
+.ptbl{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:18px}
+.ptbl th{text-align:left;padding:6px 9px;color:var(--text2);font-size:.6rem;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid var(--border);font-weight:500}
+.ptbl td{padding:7px 9px;border-bottom:1px solid rgba(30,45,69,.5);vertical-align:top;line-height:1.5}
+.ptbl tr:last-child td{border-bottom:none}
+.pn{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:.74rem}
+.pt{font-family:'IBM Plex Mono',monospace;color:#f472b6;font-size:.7rem}
+.pd2{font-family:'IBM Plex Mono',monospace;color:#86efac;font-size:.7rem}
+.pdesc{color:var(--text2);font-size:.76rem}
+.req{display:inline-block;font-size:.56rem;padding:1px 5px;border-radius:3px;background:rgba(239,68,68,.15);color:#f87171;margin-left:4px;font-family:'Sora',sans-serif;text-transform:uppercase;letter-spacing:.5px;vertical-align:middle}
+.ret-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:18px;font-size:.8rem}
+.ret-type{font-family:'IBM Plex Mono',monospace;color:#f472b6;margin-bottom:3px}
+.ret-desc{color:var(--text2);line-height:1.6}
+.note{display:flex;gap:9px;padding:9px 13px;border-radius:7px;margin-bottom:9px;font-size:.78rem;line-height:1.6}
+.ntip{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7}
+.nwarn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d}
+.ninfo{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:#7dd3fc}
+.code-wrap{background:var(--s1);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:18px}
+.code-head{padding:5px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.code-head span{font-size:.66rem;color:var(--text2);font-family:'IBM Plex Mono',monospace}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:.66rem;padding:2px 8px;cursor:pointer;transition:all .15s;font-family:'Sora',sans-serif}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.code-body{padding:13px 15px;font-family:'IBM Plex Mono',monospace;font-size:.74rem;line-height:1.8;overflow-x:auto}
+.kw{color:#7dd3fc}.fn{color:#fbbf24}.st{color:#86efac}.nm{color:#f472b6}.cm{color:#374151;font-style:italic}
+.np{color:#3b82f6}.pd{color:#f59e0b}.plt{color:#22c55e}.sns{color:#a78bfa}.sp{color:#f87171}.sk{color:#10b981}.px{color:#34d399}
+.tabs{display:flex;gap:0;margin-bottom:15px;border-bottom:1px solid var(--border)}
+.tab-btn{padding:8px 15px;border:none;background:none;color:var(--text2);font-size:.77rem;font-family:'Sora',sans-serif;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--accent)}
+.tab-btn:hover{color:var(--text3)}
+.tab-p{display:none}
+.tab-p.active{display:block}
+.notes-area{width:100%;min-height:140px;background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:11px 13px;color:var(--white);font-family:'Sora',sans-serif;font-size:.8rem;line-height:1.7;resize:vertical;outline:none;transition:border .15s}
+.notes-area:focus{border-color:var(--accent2)}
+.notes-area::placeholder{color:var(--text2)}
+.save-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.save-btn{padding:5px 14px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.35);border-radius:6px;color:var(--accent);font-size:.73rem;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s}
+.save-btn:hover{background:rgba(0,212,255,.2)}
+.save-ok{font-size:.7rem;color:#86efac;opacity:0;transition:opacity .3s}
+.save-ok.show{opacity:1}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:22px;width:90%;max-width:470px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:.95rem;color:var(--white);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.modal h3 button{background:none;border:none;color:var(--text2);font-size:1rem;cursor:pointer}
+.modal h3 button:hover{color:var(--white)}
+.fl{display:block;font-size:.68rem;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.fi2{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--white);font-family:'Sora',sans-serif;font-size:.8rem;outline:none;margin-bottom:12px;transition:border .15s}
+.fi2:focus{border-color:var(--accent2)}
+.fi2::placeholder{color:var(--text2)}
+.fta{width:100%;min-height:75px;background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--white);font-family:'Sora',sans-serif;font-size:.8rem;outline:none;margin-bottom:12px;resize:vertical;line-height:1.6;transition:border .15s}
+.fta:focus{border-color:var(--accent2)}
+.fsel{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--white);font-family:'Sora',sans-serif;font-size:.8rem;outline:none;margin-bottom:12px;cursor:pointer}
+.mf{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.mfb{padding:6px 14px;border-radius:6px;font-size:.76rem;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s}
+.mfb.c{background:none;border:1px solid var(--border);color:var(--text2)}
+.mfb.c:hover{border-color:var(--text2);color:var(--white)}
+.mfb.o{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.4);color:var(--accent)}
+.mfb.o:hover{background:rgba(0,212,255,.2)}
+.imp-code{background:var(--s1);border-radius:8px;padding:11px 13px;font-family:'IBM Plex Mono',monospace;font-size:.76rem;line-height:1.85}
+.nd-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:18px;text-align:center;margin-bottom:18px}
+.nd-box p{color:var(--text2);font-size:.8rem;margin-bottom:11px}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">Py<em>Ref</em></div>
+  <div class="search-wrap" id="sWrap">
+    <span class="si">⌕</span>
+    <input type="text" id="sIn" placeholder="Search libraries &amp; functions…">
+    <div class="sdrop" id="sDrop"></div>
+  </div>
+  <button class="tbtn p" onclick="openAddFn()">＋ Add Function</button>
+  <button class="tbtn" onclick="openAddLib()">＋ Add Library</button>
+</div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="fn-list" id="fnList"><div style="display:flex;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center"><p style="color:var(--text2);font-size:.76rem;line-height:1.6">Pick a library from the left</p></div></div>
+  <main class="content" id="content">
+    <div class="welcome">
+      <h2>Python Library Reference</h2>
+      <p>35+ libraries · 12 categories · inline docs, code examples, and personal notes for every function.</p>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="overlay" id="impOv" onclick="if(event.target===this)closeImp()">
+  <div class="modal">
+    <h3 id="impTitle">Import <button onclick="closeImp()">✕</button></h3>
+    <div class="imp-code" id="impCode"></div>
+    <div class="mf"><button class="mfb c" onclick="closeImp()">Close</button></div>
+  </div>
+</div>
+
+<!-- ADD LIBRARY -->
+<div class="overlay" id="addLibOv" onclick="if(event.target===this)closeAddLib()">
+  <div class="modal">
+    <h3>Add Library <button onclick="closeAddLib()">✕</button></h3>
+    <label class="fl">Library Name</label><input class="fi2" id="nlName" placeholder="e.g. Polars">
+    <label class="fl">Category</label>
+    <select class="fsel" id="nlCat">
+      <option value="analysis">Data Analysis</option><option value="viz">Visualization</option>
+      <option value="ml">Machine Learning</option><option value="ts">Forecasting &amp; Time Series</option>
+      <option value="dl">Deep Learning &amp; AI</option><option value="sc">Supply Chain / Optimization</option>
+      <option value="dash">Dashboard &amp; Web App</option><option value="db">Database &amp; Big Data</option>
+      <option value="nlp">NLP / Text Analytics</option><option value="cv">Computer Vision</option>
+      <option value="auto">Automation &amp; Scraping</option><option value="stat">Statistical</option>
+    </select>
+    <label class="fl">Description</label><input class="fi2" id="nlDesc" placeholder="Short description…">
+    <label class="fl">Import Statements</label><textarea class="fta" id="nlImps" placeholder="import polars as pl"></textarea>
+    <label class="fl">Docs URL</label><input class="fi2" id="nlUrl" placeholder="https://…">
+    <div class="mf"><button class="mfb c" onclick="closeAddLib()">Cancel</button><button class="mfb o" onclick="submitAddLib()">Add Library</button></div>
+  </div>
+</div>
+
+<!-- ADD FUNCTION -->
+<div class="overlay" id="addFnOv" onclick="if(event.target===this)closeAddFn()">
+  <div class="modal">
+    <h3>Add Function <button onclick="closeAddFn()">✕</button></h3>
+    <label class="fl">Library</label><select class="fsel" id="nfLib"></select>
+    <label class="fl">Category (within library)</label><input class="fi2" id="nfCat" placeholder="e.g. Array Creation">
+    <label class="fl">Function Name</label><input class="fi2" id="nfName" placeholder="e.g. np.zeros_like">
+    <label class="fl">Signature</label><input class="fi2" id="nfSig" placeholder="np.zeros_like(a, dtype=None)">
+    <label class="fl">Description</label><textarea class="fta" id="nfDesc" placeholder="What does this function do?"></textarea>
+    <label class="fl">Code Example</label><textarea class="fta" id="nfCode" placeholder="result = np.zeros_like(arr)"></textarea>
+    <label class="fl">Doc URL</label><input class="fi2" id="nfUrl" placeholder="https://numpy.org/doc/…">
+    <div class="mf"><button class="mfb c" onclick="closeAddFn()">Cancel</button><button class="mfb o" onclick="submitAddFn()">Add Function</button></div>
+  </div>
+</div>
+
+<script>
+const CATS={analysis:{label:'Data Analysis',color:'#3b82f6'},viz:{label:'Visualization',color:'#8b5cf6'},ml:{label:'Machine Learning',color:'#10b981'},ts:{label:'Forecasting & Time Series',color:'#f59e0b'},dl:{label:'Deep Learning & AI',color:'#ef4444'},sc:{label:'Supply Chain',color:'#06b6d4'},dash:{label:'Dashboard & Web App',color:'#a78bfa'},db:{label:'Database & Big Data',color:'#6366f1'},nlp:{label:'NLP / Text',color:'#ec4899'},cv:{label:'Computer Vision',color:'#f97316'},auto:{label:'Automation & Scraping',color:'#84cc16'},stat:{label:'Statistical',color:'#14b8a6'}};
+
+let LIBS={
+numpy:{name:'NumPy',cat:'analysis',color:'#3b82f6',desc:'The fundamental package for numerical computing in Python. Provides fast N-dimensional array operations, broadcasting, linear algebra, Fourier transforms, and random number generation — the foundation of every scientific Python library.',imports:['import numpy as np','from numpy.linalg import inv, det, eig','from numpy.random import default_rng'],docs:'https://numpy.org/doc/stable/reference/',cats:{'Array Creation':['np.array','np.zeros','np.ones','np.full','np.eye','np.arange','np.linspace','np.logspace','np.empty','np.random.randn','np.random.randint'],'Shape & Reshape':['np.reshape','np.flatten','np.ravel','np.transpose','np.expand_dims','np.squeeze','np.concatenate','np.vstack','np.hstack','np.split'],'Math':['np.add','np.subtract','np.multiply','np.divide','np.power','np.sqrt','np.abs','np.log','np.exp','np.sin','np.cos'],'Statistics':['np.mean','np.median','np.std','np.var','np.sum','np.min','np.max','np.argmin','np.argmax','np.cumsum','np.percentile','np.corrcoef','np.cov'],'Linear Algebra':['np.dot','np.matmul','np.linalg.inv','np.linalg.det','np.linalg.eig','np.linalg.norm','np.linalg.solve'],'Logic & Search':['np.where','np.unique','np.sort','np.argsort','np.any','np.all','np.isin','np.clip']}},
+pandas:{name:'Pandas',cat:'analysis',color:'#f59e0b',desc:'Primary Python library for data manipulation and analysis. Built on NumPy, it provides DataFrame and Series objects with SQL-like operations, group-by, pivoting, time series support, and I/O for CSV, Excel, JSON, Parquet, and SQL.',imports:['import pandas as pd','pd.set_option("display.max_columns", 50)','pd.set_option("display.float_format", "{:.2f}".format)'],docs:'https://pandas.pydata.org/docs/reference/',cats:{'I/O':['pd.read_csv','pd.read_excel','pd.read_json','pd.read_sql','pd.read_parquet','df.to_csv','df.to_excel','df.to_parquet'],'Exploration':['df.head','df.info','df.describe','df.shape','df.dtypes','df.nunique','df.sample','df.isnull','df.value_counts'],'Selection':['df.loc','df.iloc','df.query','df.filter','df.drop','df.select_dtypes'],'Cleaning':['df.dropna','df.fillna','df.drop_duplicates','df.rename','df.astype','df.replace','df.ffill','df.bfill'],'Transformation':['df.groupby','df.pivot_table','df.merge','df.concat','df.apply','df.map','df.sort_values','df.melt','df.resample','df.rolling','df.shift']}},
+polars:{name:'Polars',cat:'analysis',color:'#06b6d4',desc:'Blazingly fast DataFrame library written in Rust. Significantly faster than Pandas on large datasets. Supports lazy evaluation (query optimization), parallel execution, and streaming data larger than RAM.',imports:['import polars as pl','# Lazy API (query-optimized)','lf = pl.scan_csv("data.csv")','df = lf.collect()'],docs:'https://pola.rs/api/python/',cats:{'I/O':['pl.read_csv','pl.read_parquet','pl.read_json','pl.scan_csv','pl.scan_parquet'],'DataFrame Ops':['df.select','df.filter','df.with_columns','df.group_by','df.join','df.sort','df.rename','df.drop','df.melt','df.pivot'],'Expressions':['pl.col','pl.lit','pl.when','pl.concat','pl.Series','pl.Expr']}},
+scipy:{name:'SciPy',cat:'analysis',color:'#f87171',desc:'Scientific computing library built on NumPy. Provides modules for optimization, integration, interpolation, signal/image processing, and an extensive collection of statistical distributions and hypothesis tests.',imports:['from scipy import stats','from scipy.optimize import minimize, curve_fit','from scipy.interpolate import interp1d','from scipy.spatial.distance import euclidean'],docs:'https://docs.scipy.org/doc/scipy/reference/',cats:{'Hypothesis Tests':['stats.ttest_ind','stats.ttest_rel','stats.ttest_1samp','stats.chi2_contingency','stats.f_oneway','stats.mannwhitneyu','stats.wilcoxon','stats.shapiro','stats.kstest','stats.kruskal'],'Correlation':['stats.pearsonr','stats.spearmanr','stats.kendalltau','stats.pointbiserialr'],'Distributions':['stats.norm','stats.t','stats.chi2','stats.f','stats.binom','stats.poisson','stats.expon'],'Regression & Desc':['stats.linregress','stats.describe','stats.skew','stats.kurtosis','stats.sem','stats.iqr','stats.zscore']}},
+statsmodels:{name:'Statsmodels',cat:'analysis',color:'#818cf8',desc:'Statistical modelling and inference library. Unlike scikit-learn (prediction focus), statsmodels focuses on inference — p-values, confidence intervals, and detailed model summaries. Excellent for OLS, logistic regression, ANOVA, ARIMA, and econometrics.',imports:['import statsmodels.api as sm','from statsmodels.formula.api import ols, logit','from statsmodels.tsa.arima.model import ARIMA','from statsmodels.tsa.statespace.sarimax import SARIMAX'],docs:'https://www.statsmodels.org/stable/api.html',cats:{'Linear Models':['sm.OLS','sm.GLS','sm.WLS','ols','logit','sm.Probit'],'Time Series':['ARIMA','SARIMAX','sm.tsa.VAR','sm.tsa.ExponentialSmoothing','sm.tsa.adfuller'],'Diagnostics':['sm.stats.anova_lm','sm.stats.diagnostic','sm.stats.kpss','sm.stats.het_breuschpagan'],'Utilities':['sm.add_constant','sm.categorical','model.summary','model.predict']}},
+openpyxl:{name:'OpenPyXL',cat:'analysis',color:'#22d3ee',desc:'Read and write Excel .xlsx files without Microsoft Excel. Create and modify spreadsheets, apply cell formatting (fonts, colors, borders), add charts, and manipulate formulas — all from pure Python.',imports:['from openpyxl import Workbook, load_workbook','from openpyxl.styles import Font, Alignment, PatternFill','from openpyxl.chart import BarChart, Reference'],docs:'https://openpyxl.readthedocs.io/en/stable/api/openpyxl.html',cats:{'Workbook':['Workbook','load_workbook','wb.save','wb.active','wb.create_sheet','wb.sheetnames'],'Cells':['ws.cell','ws.append','ws["A1"]','ws.iter_rows','ws.max_row','ws.max_column'],'Formatting':['Font','Alignment','PatternFill','Border','Side'],'Charts':['BarChart','LineChart','PieChart','ScatterChart','Reference','Series']}},
+pyarrow:{name:'PyArrow',cat:'analysis',color:'#f97316',desc:'Python library for Apache Arrow — in-memory columnar format for high-performance analytics. Used as the backend for Parquet files, enables zero-copy data sharing between processes, and powers fast interchange between Pandas, Polars, and Spark.',imports:['import pyarrow as pa','import pyarrow.parquet as pq','import pyarrow.compute as pc','import pyarrow.csv as pacsv'],docs:'https://arrow.apache.org/docs/python/',cats:{'Tables':['pa.table','pa.array','pa.schema','pa.concat_tables','pa.chunked_array'],'Parquet':['pq.read_table','pq.write_table','pq.ParquetDataset','pq.ParquetFile'],'Compute':['pc.sum','pc.mean','pc.filter','pc.sort_indices','pc.cast','pc.utf8_upper']}},
+matplotlib:{name:'Matplotlib',cat:'viz',color:'#22c55e',desc:'The foundational Python plotting library. Produces publication-quality static, animated, and interactive visualizations. Most other libraries (Seaborn, Pandas plotting) are built on top of it. Extremely customizable at every level.',imports:['import matplotlib.pyplot as plt','import matplotlib.patches as mpatches','from matplotlib.gridspec import GridSpec','plt.rcParams["figure.dpi"] = 120','plt.style.use("seaborn-v0_8")'],docs:'https://matplotlib.org/stable/api/',cats:{'Plot Types':['plt.plot','plt.scatter','plt.bar','plt.barh','plt.hist','plt.boxplot','plt.violinplot','plt.pie','plt.fill_between','plt.errorbar','plt.contour','plt.imshow'],'Figure & Axes':['plt.figure','plt.subplots','plt.subplot','plt.tight_layout','plt.savefig','plt.show','plt.close'],'Decoration':['ax.set_title','ax.set_xlabel','ax.set_ylabel','ax.legend','ax.grid','ax.annotate','ax.axhline','ax.axvline','ax.text'],'Styling':['ax.set_xlim','ax.set_ylim','ax.set_xticks','ax.set_xticklabels','ax.tick_params','plt.colorbar']}},
+seaborn:{name:'Seaborn',cat:'viz',color:'#a78bfa',desc:'Statistical data visualization built on Matplotlib. High-level interface for drawing attractive statistical graphics with minimal code. Integrates tightly with Pandas DataFrames and automatically computes statistical summaries.',imports:['import seaborn as sns','sns.set_theme(style="darkgrid", palette="tab10")','sns.set_palette("husl")'],docs:'https://seaborn.pydata.org/api.html',cats:{'Distribution':['sns.histplot','sns.kdeplot','sns.ecdfplot','sns.rugplot','sns.displot'],'Categorical':['sns.boxplot','sns.violinplot','sns.stripplot','sns.swarmplot','sns.barplot','sns.countplot','sns.pointplot'],'Relational':['sns.scatterplot','sns.lineplot','sns.relplot'],'Matrix & Multi':['sns.heatmap','sns.clustermap','sns.pairplot','sns.FacetGrid','sns.PairGrid'],'Regression':['sns.regplot','sns.lmplot','sns.residplot']}},
+plotly:{name:'Plotly',cat:'viz',color:'#34d399',desc:'Interactive charting library. Charts render in the browser as interactive HTML — zoom, pan, hover, legend-toggle out of the box. Supports 40+ chart types including 3D, maps, and financial. Pairs with Dash for full dashboards.',imports:['import plotly.express as px','import plotly.graph_objects as go','from plotly.subplots import make_subplots'],docs:'https://plotly.com/python-api-reference/',cats:{'Express Charts':['px.scatter','px.line','px.bar','px.histogram','px.box','px.violin','px.pie','px.scatter_matrix','px.parallel_coordinates'],'Geographic':['px.scatter_geo','px.choropleth','px.scatter_mapbox','px.density_mapbox'],'Graph Objects':['go.Scatter','go.Bar','go.Heatmap','go.Surface','go.Figure','go.Candlestick'],'Layout':['fig.update_layout','fig.update_traces','fig.add_trace','make_subplots','fig.write_html']}},
+altair:{name:'Altair',cat:'viz',color:'#818cf8',desc:'Declarative statistical visualization based on Vega-Lite grammar. You describe what you want (not how to draw it). Excellent for interactive charts and composable multi-view specifications.',imports:['import altair as alt','alt.data_transformers.disable_max_rows()'],docs:'https://altair-viz.github.io/user_guide/api.html',cats:{'Charts':['alt.Chart','alt.mark_point','alt.mark_line','alt.mark_bar','alt.mark_rect','alt.mark_area','alt.mark_arc'],'Encoding':['alt.X','alt.Y','alt.Color','alt.Size','alt.Tooltip','alt.Facet','alt.Shape'],'Interaction':['alt.selection_interval','alt.condition','alt.bind_range','alt.concat','alt.layer']}},
+bokeh:{name:'Bokeh',cat:'viz',color:'#06b6d4',desc:'Interactive visualization for modern web browsers. Elegant, high-performance interactivity for large or streaming datasets. Supports custom JavaScript callbacks for sophisticated interactions without leaving Python.',imports:['from bokeh.plotting import figure, show, output_notebook','from bokeh.models import ColumnDataSource, HoverTool','from bokeh.layouts import row, column, gridplot'],docs:'https://docs.bokeh.org/en/latest/docs/reference.html',cats:{'Plotting':['figure','p.line','p.scatter','p.vbar','p.quad','p.rect','p.patch'],'Models':['ColumnDataSource','HoverTool','ColorBar','Legend','Slider','Select','RangeSlider'],'Layout':['row','column','gridplot','Panel','Tabs','show','output_notebook']}},
+sklearn:{name:'Scikit-Learn',cat:'ml',color:'#10b981',desc:'The most widely-used ML library for Python. Implements hundreds of algorithms for classification, regression, clustering, and preprocessing. Consistent fit() → predict() API. Superb documentation and scikit-learn compatible ecosystem.',imports:['from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV','from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder','from sklearn.linear_model import LinearRegression, LogisticRegression','from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier','from sklearn.metrics import accuracy_score, classification_report, r2_score'],docs:'https://scikit-learn.org/stable/api/index.html',cats:{'Model Selection':['train_test_split','cross_val_score','GridSearchCV','RandomizedSearchCV','StratifiedKFold'],'Preprocessing':['StandardScaler','MinMaxScaler','RobustScaler','LabelEncoder','OneHotEncoder','PolynomialFeatures','SimpleImputer','KNNImputer'],'Linear Models':['LinearRegression','LogisticRegression','Ridge','Lasso','ElasticNet','SGDClassifier'],'Ensemble':['RandomForestClassifier','RandomForestRegressor','GradientBoostingClassifier','GradientBoostingRegressor','AdaBoostClassifier'],'Clustering':['KMeans','DBSCAN','AgglomerativeClustering','GaussianMixture'],'Dimensionality':['PCA','TSNE','TruncatedSVD'],'Metrics':['accuracy_score','classification_report','confusion_matrix','r2_score','mean_squared_error','roc_auc_score','f1_score']}},
+xgboost:{name:'XGBoost',cat:'ml',color:'#ef4444',desc:'Optimized gradient boosting framework — one of the most powerful algorithms for structured/tabular data. Extremely fast, handles missing values natively, built-in regularization. The standard choice for Kaggle competitions on tabular data.',imports:['import xgboost as xgb','from xgboost import XGBClassifier, XGBRegressor'],docs:'https://xgboost.readthedocs.io/en/stable/python/python_api.html',cats:{'Models':['XGBClassifier','XGBRegressor','XGBRanker','xgb.DMatrix','xgb.train'],'Utilities':['xgb.plot_importance','xgb.cv','model.feature_importances_','model.save_model','model.load_model']}},
+lightgbm:{name:'LightGBM',cat:'ml',color:'#84cc16',desc:'Fast, distributed gradient boosting by Microsoft. Uses histogram-based algorithms — much faster than XGBoost on large datasets with many features. Supports GPU training and handles categorical features natively.',imports:['import lightgbm as lgb','from lightgbm import LGBMClassifier, LGBMRegressor'],docs:'https://lightgbm.readthedocs.io/en/stable/pythonapi/lightgbm.html',cats:{'Models':['LGBMClassifier','LGBMRegressor','LGBMRanker','lgb.Dataset','lgb.train'],'Utilities':['lgb.cv','lgb.plot_importance','model.feature_importances_','model.best_iteration']}},
+catboost:{name:'CatBoost',cat:'ml',color:'#f97316',desc:'Gradient boosting by Yandex that natively handles categorical features without preprocessing. Often achieves best performance out-of-the-box. Resistant to overfitting. Has built-in visualization tools.',imports:['from catboost import CatBoostClassifier, CatBoostRegressor, Pool'],docs:'https://catboost.ai/en/docs/concepts/python-reference_catboostclassifier',cats:{'Models':['CatBoostClassifier','CatBoostRegressor','CatBoostRanker','Pool'],'Utilities':['model.fit','model.predict','model.get_feature_importance','model.plot_tree','model.eval_metrics']}},
+pycaret:{name:'PyCaret',cat:'ml',color:'#818cf8',desc:'Low-code ML library that automates the workflow. Compare dozens of models, tune hyperparameters, and create ensembles in a few lines. Built for rapid experimentation — not for deep customization.',imports:['from pycaret.classification import *','from pycaret.regression import *','from pycaret.clustering import *'],docs:'https://pycaret.readthedocs.io/en/stable/api/',cats:{'Setup & Compare':['setup','compare_models','create_model','tune_model','ensemble_model'],'Evaluation':['evaluate_model','predict_model','pull','plot_model','interpret_model'],'Deploy':['save_model','load_model','finalize_model','deploy_model']}},
+prophet:{name:'Prophet',cat:'ts',color:'#f59e0b',desc:'Time series forecasting by Meta. Designed for business forecasting with seasonal patterns, holiday effects, and trend changepoints. Works well with missing data. Minimal configuration — practical and interpretable.',imports:['from prophet import Prophet','import pandas as pd'],docs:'https://facebook.github.io/prophet/docs/quick_start.html',cats:{'Core':['Prophet','model.fit','model.predict','model.make_future_dataframe'],'Components':['model.plot','model.plot_components','add_seasonality','add_country_holidays','add_regressor']}},
+darts:{name:'Darts',cat:'ts',color:'#06b6d4',desc:'Unified time series library combining classical (ARIMA, Theta) and deep learning (TCN, TFT, N-BEATS) models under one API. Includes backtesting utilities, probabilistic forecasting, and ensemble methods.',imports:['from darts import TimeSeries','from darts.models import ExponentialSmoothing, ARIMA, NBEATSModel','from darts.metrics import mape, rmse'],docs:'https://unit8co.github.io/darts/generated_api/darts.html',cats:{'Core':['TimeSeries','TimeSeries.from_dataframe','TimeSeries.from_values','TimeSeries.from_times_and_values'],'Models':['ExponentialSmoothing','ARIMA','NBEATSModel','TFTModel','TCNModel','LightGBMModel','NaiveDrift'],'Metrics':['mape','rmse','mae','smape','r2_score']}},
+sktime:{name:'sktime',cat:'ts',color:'#a78bfa',desc:'Unified scikit-learn compatible framework for time series machine learning. Covers forecasting, classification, regression, and clustering of time series with a consistent Pythonic API.',imports:['from sktime.forecasting.arima import ARIMA','from sktime.classification.interval_based import TimeSeriesForestClassifier','from sktime.transformations.series.impute import Imputer'],docs:'https://www.sktime.net/en/stable/api_reference.html',cats:{'Forecasting':['ARIMA','ExponentialSmoothing','NaiveForecaster','AutoARIMA','STLForecaster'],'Classification':['TimeSeriesForestClassifier','KNeighborsTimeSeriesClassifier'],'Transformations':['Imputer','Differencer','BoxCoxTransformer','SlidingWindowSplitter']}},
+tensorflow:{name:'TensorFlow',cat:'dl',color:'#ef4444',desc:'End-to-end open-source deep learning framework by Google. Includes Keras as its high-level API, TensorFlow Serving for deployment, TF Lite for mobile, and TF.js for the browser. Used in research and production at scale.',imports:['import tensorflow as tf','from tensorflow import keras','from tensorflow.keras import layers, models, optimizers','from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint'],docs:'https://www.tensorflow.org/api_docs/python/tf',cats:{'Tensors':['tf.constant','tf.Variable','tf.zeros','tf.ones','tf.random.normal','tf.cast','tf.reshape'],'Keras Models':['keras.Sequential','keras.Model','model.compile','model.fit','model.predict','model.evaluate','model.save'],'Layers':['layers.Dense','layers.Conv2D','layers.LSTM','layers.GRU','layers.Dropout','layers.BatchNormalization','layers.Embedding','layers.Flatten'],'Callbacks':['EarlyStopping','ModelCheckpoint','ReduceLROnPlateau','TensorBoard','LearningRateScheduler']}},
+pytorch:{name:'PyTorch',cat:'dl',color:'#f97316',desc:'Deep learning framework by Meta, dominant in academic research. Dynamic computation graph (eager execution) makes it Pythonic and highly flexible. Simpler to debug than TensorFlow. Now the default in most research papers.',imports:['import torch','import torch.nn as nn','import torch.optim as optim','from torch.utils.data import DataLoader, Dataset','import torchvision'],docs:'https://pytorch.org/docs/stable/index.html',cats:{'Tensors':['torch.tensor','torch.zeros','torch.ones','torch.randn','torch.from_numpy','tensor.cuda','tensor.numpy','tensor.detach'],'Neural Networks':['nn.Module','nn.Linear','nn.Conv2d','nn.LSTM','nn.Dropout','nn.BatchNorm2d','nn.Sequential','nn.Embedding'],'Training':['optim.Adam','optim.SGD','nn.CrossEntropyLoss','nn.MSELoss','loss.backward','optim.step','optim.zero_grad'],'Data':['Dataset','DataLoader','torchvision.transforms','torchvision.datasets','Sampler']}},
+transformers:{name:'Transformers',cat:'dl',color:'#fbbf24',desc:'Hugging Face library providing thousands of pre-trained NLP, vision, and audio models (BERT, GPT, T5, Llama, Whisper, etc.) with a consistent API. Democratizes access to state-of-the-art AI.',imports:['from transformers import pipeline','from transformers import AutoTokenizer, AutoModel, AutoModelForSequenceClassification','from transformers import Trainer, TrainingArguments'],docs:'https://huggingface.co/docs/transformers/index',cats:{'Pipelines':['pipeline','pipeline("text-classification")','pipeline("text-generation")','pipeline("ner")','pipeline("summarization")','pipeline("translation")'],'Models':['AutoModel','AutoModelForSequenceClassification','AutoModelForCausalLM','AutoTokenizer','AutoConfig'],'Training':['Trainer','TrainingArguments','DataCollatorWithPadding','compute_metrics']}},
+pulp:{name:'PuLP',cat:'sc',color:'#06b6d4',desc:'Linear and integer programming modelling in Python. Define decision variables, objective function, and constraints. Interfaces with CBC, GLPK, CPLEX, and Gurobi solvers. Standard tool for supply chain optimization, scheduling, and resource allocation.',imports:['import pulp','from pulp import LpProblem, LpVariable, LpMinimize, LpMaximize, lpSum, LpStatus'],docs:'https://coin-or.github.io/pulp/technical/pulp.html',cats:{'Core':['LpProblem','LpVariable','LpMinimize','LpMaximize','lpSum','prob.solve'],'Results':['LpStatus','pulp.value','pulp.INFEASIBLE','pulp.OPTIMAL','var.varValue']}},
+networkx:{name:'NetworkX',cat:'sc',color:'#3b82f6',desc:'Library for creating, manipulating, and analysing complex graphs and networks. Useful for supply chain network analysis, route optimization, dependency graphs, and social network analysis.',imports:['import networkx as nx'],docs:'https://networkx.org/documentation/stable/reference/index.html',cats:{'Graph Creation':['nx.Graph','nx.DiGraph','nx.MultiGraph','G.add_node','G.add_edge','nx.read_edgelist','G.nodes','G.edges'],'Algorithms':['nx.shortest_path','nx.dijkstra_path','nx.betweenness_centrality','nx.pagerank','nx.connected_components','nx.minimum_spanning_tree'],'Visualization':['nx.draw','nx.draw_networkx','nx.spring_layout','nx.circular_layout','nx.kamada_kawai_layout']}},
+simpy:{name:'SimPy',cat:'sc',color:'#22d3ee',desc:'Process-based discrete-event simulation. Models systems with resources, queues, and time — supply chains, warehouse operations, customer service, healthcare pathways. Define processes as Python generators.',imports:['import simpy'],docs:'https://simpy.readthedocs.io/en/latest/api_reference/',cats:{'Core':['simpy.Environment','env.process','env.run','env.now','simpy.Resource','simpy.Container','simpy.Store'],'Events':['env.timeout','resource.request','resource.release','env.event','env.all_of','env.any_of']}},
+streamlit:{name:'Streamlit',cat:'dash',color:'#a78bfa',desc:'Fastest way to build data science web apps in pure Python. No HTML/CSS/JS needed. Write a Python script, run streamlit run app.py — instantly get a shareable web app with widgets, charts, and tables.',imports:['import streamlit as st','import pandas as pd','import plotly.express as px'],docs:'https://docs.streamlit.io/library/api-reference',cats:{'Text & Media':['st.title','st.header','st.subheader','st.write','st.markdown','st.metric','st.caption','st.image','st.video'],'Input Widgets':['st.button','st.selectbox','st.multiselect','st.slider','st.number_input','st.text_input','st.date_input','st.file_uploader','st.checkbox','st.radio'],'Data Display':['st.dataframe','st.table','st.json','st.code','st.plotly_chart','st.pyplot','st.map','st.altair_chart'],'Layout':['st.columns','st.expander','st.tabs','st.sidebar','st.container','st.empty','st.form'],'State & Cache':['st.session_state','st.cache_data','st.cache_resource','st.rerun','st.stop']}},
+dash:{name:'Dash',cat:'dash',color:'#6366f1',desc:'Framework for analytical web apps by Plotly. More flexible than Streamlit — full control over layout and interactivity through callbacks. Production-grade dashboards deployable as standalone web apps.',imports:['import dash','from dash import dcc, html, Input, Output, State, callback','import plotly.express as px'],docs:'https://dash.plotly.com/reference',cats:{'Layout':['html.Div','html.H1','dcc.Graph','dcc.Dropdown','dcc.Slider','dcc.DatePickerRange','dcc.Store','dcc.Interval'],'Callbacks':['@callback','Input','Output','State','no_update','dash.callback_context'],'App':['dash.Dash','app.run','app.layout','app.server']}},
+sqlalchemy:{name:'SQLAlchemy',cat:'db',color:'#6366f1',desc:'Python SQL toolkit and ORM. Work with relational databases using Python objects instead of raw SQL. Supports SQLite, PostgreSQL, MySQL, Oracle, MSSQL. Two layers: Core (SQL expression language) and ORM (object mapping).',imports:['from sqlalchemy import create_engine, Column, Integer, String, Float','from sqlalchemy.orm import Session, DeclarativeBase','from sqlalchemy import text, select, insert, update, delete'],docs:'https://docs.sqlalchemy.org/en/20/orm/',cats:{'Engine':['create_engine','engine.connect','engine.execute','engine.dispose','engine.begin'],'ORM':['DeclarativeBase','Column','relationship','Session','session.add','session.commit','session.query','session.flush'],'Core SQL':['text','select','insert','update','delete','Table','MetaData','and_','or_']}},
+pymysql:{name:'PyMySQL',cat:'db',color:'#818cf8',desc:'Pure-Python MySQL client library. Connect to MySQL/MariaDB databases, execute queries, handle transactions, and fetch results — all without compiled C extensions.',imports:['import pymysql','conn = pymysql.connect(host="localhost", user="root", password="", database="mydb")'],docs:'https://pymysql.readthedocs.io/en/latest/api/',cats:{'Connection':['pymysql.connect','conn.cursor','conn.commit','conn.rollback','conn.close'],'Queries':['cursor.execute','cursor.fetchone','cursor.fetchall','cursor.fetchmany','cursor.rowcount','cursor.lastrowid']}},
+nltk:{name:'NLTK',cat:'nlp',color:'#ec4899',desc:'Natural Language Toolkit — comprehensive platform for building Python programs that work with human language data. Includes tokenizers, parsers, stemmers, taggers, and corpuses. Best for learning NLP fundamentals and classical NLP methods.',imports:['import nltk','from nltk.tokenize import word_tokenize, sent_tokenize','from nltk.corpus import stopwords','from nltk.stem import PorterStemmer, WordNetLemmatizer'],docs:'https://www.nltk.org/api/nltk.html',cats:{'Tokenization':['word_tokenize','sent_tokenize','TweetTokenizer','MWETokenizer'],'Processing':['PorterStemmer','WordNetLemmatizer','stopwords.words','FreqDist','ngrams'],'Analysis':['nltk.pos_tag','nltk.ne_chunk','BigramCollocationFinder','TextCollection']}},
+spacy:{name:'spaCy',cat:'nlp',color:'#f472b6',desc:'Industrial-strength NLP library. Faster and more production-ready than NLTK. 70+ language support, named entity recognition, dependency parsing, word vectors. Easy to train custom models and integrate into pipelines.',imports:['import spacy','nlp = spacy.load("en_core_web_sm")',  '# python -m spacy download en_core_web_sm'],docs:'https://spacy.io/api',cats:{'Core':['spacy.load','nlp(text)','doc.ents','doc.sents','doc.noun_chunks','token.lemma_','token.pos_','token.dep_'],'Pipeline':['nlp.pipe','nlp.add_pipe','EntityRuler','Matcher','PhraseMatcher'],'Training':['spacy.training.Example','nlp.update','nlp.to_disk','nlp.from_disk']}},
+opencv:{name:'OpenCV',cat:'cv',color:'#f97316',desc:'Industry-standard Computer Vision library. Image and video processing — reading/writing images, color space conversion, filtering, edge detection, object detection, feature matching, and camera calibration. Bindings for C++ library.',imports:['import cv2','import numpy as np'],docs:'https://docs.opencv.org/4.x/',cats:{'I/O':['cv2.imread','cv2.imwrite','cv2.imshow','cv2.VideoCapture','cv2.VideoWriter','cv2.waitKey'],'Processing':['cv2.cvtColor','cv2.resize','cv2.GaussianBlur','cv2.Canny','cv2.threshold','cv2.erode','cv2.dilate','cv2.flip'],'Analysis':['cv2.findContours','cv2.drawContours','cv2.HoughLines','cv2.ORB_create','cv2.matchTemplate','cv2.CascadeClassifier','cv2.face']}},
+requests:{name:'Requests',cat:'auto',color:'#84cc16',desc:'"HTTP for Humans." Simple, elegant HTTP library — the de facto standard for making HTTP requests in Python. GET, POST, PUT, DELETE with sessions, authentication, timeout, and streaming.',imports:['import requests','from requests.auth import HTTPBasicAuth','from requests.adapters import HTTPAdapter, Retry'],docs:'https://requests.readthedocs.io/en/latest/api/',cats:{'Methods':['requests.get','requests.post','requests.put','requests.delete','requests.patch','requests.head','requests.request'],'Session':['requests.Session','session.get','session.headers','session.auth','session.mount'],'Response':['response.status_code','response.json','response.text','response.content','response.raise_for_status','response.headers']}},
+beautifulsoup:{name:'BeautifulSoup',cat:'auto',color:'#a3e635',desc:'Library for parsing HTML and XML. Used for web scraping to extract data from web pages. Works with multiple parsers (html.parser, lxml, html5lib). Pairs naturally with Requests for scraping workflows.',imports:['from bs4 import BeautifulSoup','import requests'],docs:'https://www.crummy.com/software/BeautifulSoup/bs4/doc/',cats:{'Parsing':['BeautifulSoup','soup.find','soup.find_all','soup.select','soup.select_one'],'Navigation':['tag.text','tag.get_text','tag["attr"]','tag.get','tag.parent','tag.children','tag.next_sibling'],'Modification':['tag.string','tag.decompose','tag.extract','tag.replace_with','new_tag']}},
+pingouin:{name:'Pingouin',cat:'stat',color:'#14b8a6',desc:'Statistical library that outputs tidy Pandas DataFrames for all results. One-liner tests with full tables — effect sizes, confidence intervals, and power — included automatically. Simpler interface than SciPy for statistical testing.',imports:['import pingouin as pg'],docs:'https://pingouin-stats.org/api.html',cats:{'Tests':['pg.ttest','pg.anova','pg.welch_anova','pg.rm_anova','pg.kruskal','pg.mwu','pg.chi2_independence','pg.friedman'],'Correlation':['pg.corr','pg.pairwise_corr','pg.partial_corr','pg.rm_corr'],'Reliability':['pg.cronbach_alpha','pg.intraclass_corr','pg.power_ttest','pg.power_anova'],'Regression':['pg.linear_regression','pg.logistic_regression','pg.mediation_analysis','pg.ancova']}}
+};
+
+let FUNCTIONS={
+'np.array':{sig:`np.array(object, dtype=None, *, copy=True, order='K', ndmin=0)`,desc:'Create an ndarray from a list, tuple, or any array-like object. The core building block of NumPy — nearly every numerical workflow starts here.',params:[{name:'object',type:'array_like',req:true,desc:'Input data — any sequence convertible to an array: list, tuple, ndarray.'},{name:'dtype',type:'data-type',default:'None',desc:'Desired output type (np.float32, np.int64…). Inferred automatically if not given.'},{name:'copy',type:'bool',default:'True',desc:'Force a copy. Set False to avoid copying when possible.'},{name:'ndmin',type:'int',default:'0',desc:'Minimum number of dimensions in the result.'}],returns:{type:'ndarray',desc:'An array satisfying the specified requirements.'},example:`<span class="kw">import</span> <span class="np">numpy</span> <span class="kw">as</span> np\n\na = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])\nb = np.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">3</span>, <span class="nm">4</span>]])  <span class="cm"># 2D</span>\nc = np.<span class="fn">array</span>([<span class="nm">1.5</span>, <span class="nm">2.5</span>], dtype=np.float32)\n<span class="fn">print</span>(b.shape)  <span class="cm"># (2, 2)</span>`,notes:[{type:'tip',text:'Use dtype=np.float32 to halve memory vs float64 for large arrays.'}],docUrl:'https://numpy.org/doc/stable/reference/generated/numpy.array.html'},
+'np.linspace':{sig:`np.linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None)`,desc:'Return num evenly spaced values over [start, stop]. Unlike arange, you specify the point count not the step — ideal for generating smooth x-values for plots.',params:[{name:'start',type:'float',req:true,desc:'Starting value.'},{name:'stop',type:'float',req:true,desc:'Ending value (inclusive unless endpoint=False).'},{name:'num',type:'int',default:'50',desc:'Number of points to generate.'},{name:'endpoint',type:'bool',default:'True',desc:'If False, stop is excluded.'},{name:'retstep',type:'bool',default:'False',desc:'If True, returns (samples, step_size) tuple.'}],returns:{type:'ndarray',desc:'Array of num evenly spaced samples.'},example:`x = np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">2</span>*np.pi, <span class="nm">100</span>)\ny = np.<span class="fn">sin</span>(x)\nplt.<span class="fn">plot</span>(x, y)`,notes:[{type:'tip',text:'Use linspace when you know the point count; use arange when you know the step size.'}],docUrl:'https://numpy.org/doc/stable/reference/generated/numpy.linspace.html'},
+'np.where':{sig:`np.where(condition, [x, y])`,desc:'Vectorised conditional — return x where condition is True, y elsewhere. The NumPy equivalent of a ternary operator applied element-wise.',params:[{name:'condition',type:'array_like (bool)',req:true,desc:'Boolean array controlling selection.'},{name:'x, y',type:'array_like',default:'—',desc:'Values to choose from. Broadcastable to condition shape.'}],returns:{type:'ndarray',desc:'Array drawn from x or y per condition.'},example:`a = np.<span class="fn">array</span>([<span class="nm">-3</span>, <span class="nm">1</span>, <span class="nm">-1</span>, <span class="nm">4</span>])\nrelu = np.<span class="fn">where</span>(a > <span class="nm">0</span>, a, <span class="nm">0</span>)   <span class="cm"># [0,1,0,4]</span>\nidx  = np.<span class="fn">where</span>(a > <span class="nm">0</span>)           <span class="cm"># returns indices</span>`,notes:[{type:'tip',text:'Called with only condition, where() returns indices — same as np.nonzero().'}],docUrl:'https://numpy.org/doc/stable/reference/generated/numpy.where.html'},
+'np.mean':{sig:`np.mean(a, axis=None, dtype=None, keepdims=False)`,desc:'Compute the arithmetic mean. Without axis, reduces the entire array to a scalar. With axis, reduces along that dimension.',params:[{name:'a',type:'array_like',req:true,desc:'Input array.'},{name:'axis',type:'int or tuple',default:'None',desc:'Axis to reduce. None = flatten everything.'},{name:'keepdims',type:'bool',default:'False',desc:'Keep reduced dimensions as size-1 for broadcasting.'}],returns:{type:'ndarray or scalar',desc:'Mean of array elements.'},example:`a = np.<span class="fn">array</span>([[<span class="nm">1</span>,<span class="nm">2</span>],[<span class="nm">3</span>,<span class="nm">4</span>]])\nnp.<span class="fn">mean</span>(a)          <span class="cm"># 2.5</span>\nnp.<span class="fn">mean</span>(a, axis=<span class="nm">0</span>)  <span class="cm"># [2., 3.] — col means</span>\nnp.<span class="fn">mean</span>(a, axis=<span class="nm">1</span>)  <span class="cm"># [1.5, 3.5] — row means</span>`,docUrl:'https://numpy.org/doc/stable/reference/generated/numpy.mean.html'},
+'pd.read_csv':{sig:`pd.read_csv(filepath_or_buffer, *, sep=',', header='infer', usecols=None, dtype=None, na_values=None, parse_dates=False, nrows=None, chunksize=None, encoding='utf-8')`,desc:'Load a CSV file into a DataFrame. Primary data ingestion function. Supports local files, URLs, compressed archives, and streaming for large files.',params:[{name:'filepath_or_buffer',type:'str / path / URL',req:true,desc:'Path, URL, or file-like object.'},{name:'sep',type:'str',default:"','",desc:"Delimiter. Use sep=None for auto-detect."},{name:'usecols',type:'list',default:'None',desc:'Load only these columns — saves memory on wide files.'},{name:'dtype',type:'dict',default:'None',desc:"Column type overrides: {'col': np.float32}."},{name:'parse_dates',type:'bool/list',default:'False',desc:'Parse these columns as datetime.'},{name:'nrows',type:'int',default:'None',desc:'Read only the first n rows.'},{name:'chunksize',type:'int',default:'None',desc:'Return iterator of chunks — for large files.'}],returns:{type:'DataFrame or TextFileReader',desc:'Loaded data.'},example:`df = pd.<span class="fn">read_csv</span>(<span class="st">'data.csv'</span>,\n    usecols=[<span class="st">'date'</span>, <span class="st">'sales'</span>],\n    parse_dates=[<span class="st">'date'</span>],\n    nrows=<span class="nm">10000</span>)\n\n<span class="cm"># Large file — chunked</span>\n<span class="kw">for</span> chunk <span class="kw">in</span> pd.<span class="fn">read_csv</span>(<span class="st">'big.csv'</span>, chunksize=<span class="nm">50000</span>):\n    process(chunk)`,notes:[{type:'tip',text:'Always run df.info() after loading to verify dtypes.'},{type:'warning',text:'Use usecols= when you only need a subset — avoids loading unnecessary columns into memory.'}],docUrl:'https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html'},
+'df.groupby':{sig:`DataFrame.groupby(by=None, as_index=True, sort=True, observed=True, dropna=True)`,desc:'Split → Apply → Combine. Group rows by one or more columns then aggregate, transform, or filter. The workhorse of Pandas summarisation.',params:[{name:'by',type:'label / list / function',req:true,desc:'Column name(s) or function to group by.'},{name:'as_index',type:'bool',default:'True',desc:'Return groups as index. False = SQL-style output.'},{name:'sort',type:'bool',default:'True',desc:'Sort group keys.'},{name:'observed',type:'bool',default:'True',desc:'Only show observed Categorical groups.'},{name:'dropna',type:'bool',default:'True',desc:'Exclude NaN group keys.'}],returns:{type:'DataFrameGroupBy',desc:'GroupBy object awaiting aggregation.'},example:`df.<span class="fn">groupby</span>(<span class="st">'region'</span>)[<span class="st">'sales'</span>].<span class="fn">sum</span>()\n\n<span class="cm"># Named aggregations</span>\ndf.<span class="fn">groupby</span>(<span class="st">'cat'</span>).<span class="fn">agg</span>(\n    total = (<span class="st">'sales'</span>, <span class="st">'sum'</span>),\n    avg   = (<span class="st">'sales'</span>, <span class="st">'mean'</span>),\n    cnt   = (<span class="st">'id'</span>, <span class="st">'count'</span>)\n).<span class="fn">reset_index</span>()\n\n<span class="cm"># Rank within group</span>\ndf[<span class="st">'rank'</span>] = df.<span class="fn">groupby</span>(<span class="st">'region'</span>)[<span class="st">'sales'</span>].<span class="fn">transform</span>(<span class="st">'rank'</span>, ascending=<span class="kw">False</span>)`,notes:[{type:'tip',text:'Add .reset_index() after groupby().agg() to flatten the grouped index into regular columns.'}],docUrl:'https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html'},
+'df.merge':{sig:`pd.merge(left, right, how='inner', on=None, left_on=None, right_on=None, suffixes=('_x','_y'), indicator=False, validate=None)`,desc:'SQL-style join of two DataFrames. Handles inner, left, right, outer, and cross joins.',params:[{name:'left / right',type:'DataFrame',req:true,desc:'DataFrames to merge.'},{name:'how',type:'str',default:"'inner'",desc:"'inner','left','right','outer','cross'."},{name:'on',type:'label/list',default:'None',desc:'Column(s) present in both frames to join on.'},{name:'indicator',type:'bool',default:'False',desc:"Add '_merge' column showing source of each row."},{name:'validate',type:'str',default:'None',desc:"'one_to_one','one_to_many' — raises if violated."}],returns:{type:'DataFrame',desc:'Merged result.'},example:`pd.<span class="fn">merge</span>(orders, customers, on=<span class="st">'id'</span>)\npd.<span class="fn">merge</span>(orders, customers, on=<span class="st">'id'</span>, how=<span class="st">'left'</span>)\n\n<span class="cm"># Diagnose unmatched rows</span>\ndf = pd.<span class="fn">merge</span>(a, b, on=<span class="st">'id'</span>, how=<span class="st">'outer'</span>, indicator=<span class="kw">True</span>)\ndf[df[<span class="st">'_merge'</span>] != <span class="st">'both'</span>]`,notes:[{type:'warning',text:'Many-to-many joins explode row count. Use validate= to catch this early.'},{type:'tip',text:'Check df.shape before/after — unexpected sizes reveal duplicates or mismatched keys.'}],docUrl:'https://pandas.pydata.org/docs/reference/api/pandas.merge.html'},
+'sns.heatmap':{sig:`seaborn.heatmap(data, *, vmin=None, vmax=None, cmap=None, center=None, robust=False, annot=None, fmt='.2g', linewidths=0, linecolor='white', cbar=True, square=False, mask=None, ax=None, **kwargs)`,desc:"Plot rectangular data as a color-encoded matrix. Each cell's color encodes its numeric value. Most commonly used to visualise correlation matrices.",params:[{name:'data',type:'2D array or DataFrame',req:true,desc:'Rectangular numeric dataset.'},{name:'vmin / vmax',type:'float',default:'None',desc:'Anchor the colormap scale.'},{name:'cmap',type:'str',default:'None',desc:"Colormap: 'coolwarm','viridis','RdYlGn','Blues'."},{name:'center',type:'float',default:'None',desc:'Value mapped to center color — for diverging maps.'},{name:'annot',type:'bool or array',default:'None',desc:'Write data values inside cells.'},{name:'fmt',type:'str',default:"'.2g'",desc:"Format: '.2f' (2 decimals), '.0f' (integer), '.1%'."},{name:'linewidths',type:'float',default:'0',desc:'Width of cell borders. 0.5 gives a clean grid.'},{name:'mask',type:'bool array',default:'None',desc:'Cells where True are hidden — use for upper triangle.'}],returns:{type:'Axes',desc:'Matplotlib Axes with heatmap drawn.'},example:`corr = df.<span class="fn">corr</span>(numeric_only=<span class="kw">True</span>)\nsns.<span class="fn">heatmap</span>(corr,\n    annot=<span class="kw">True</span>, fmt=<span class="st">'.2f'</span>,\n    cmap=<span class="st">'coolwarm'</span>, center=<span class="nm">0</span>,\n    square=<span class="kw">True</span>, linewidths=<span class="nm">0.5</span>)\n\n<span class="cm"># Mask upper triangle (cleaner look)</span>\n<span class="kw">import</span> numpy <span class="kw">as</span> np\nmask = np.<span class="fn">triu</span>(np.<span class="fn">ones_like</span>(corr, dtype=<span class="fn">bool</span>))\nsns.<span class="fn">heatmap</span>(corr, mask=mask, annot=<span class="kw">True</span>)`,notes:[{type:'tip',text:"cmap='coolwarm' + center=0: red=positive, blue=negative, white=zero."},{type:'info',text:'For large matrices turn off annot and set linewidths=0 for readability.'}],docUrl:'https://seaborn.pydata.org/generated/seaborn.heatmap.html'},
+'sns.boxplot':{sig:`seaborn.boxplot(data=None, *, x=None, y=None, hue=None, order=None, palette=None, width=0.8, whis=1.5, fill=True, dodge='auto', ax=None)`,desc:'Box-and-whisker plot showing distribution quartiles per category. Whiskers extend to 1.5×IQR; points beyond are outliers.',params:[{name:'data',type:'DataFrame or array',req:true,desc:'Dataset.'},{name:'x / y',type:'str',default:'None',desc:'Categorical and numeric variables.'},{name:'hue',type:'str',default:'None',desc:'Second grouping — adds colour.'},{name:'whis',type:'float',default:'1.5',desc:'IQR multiplier for whisker length.'},{name:'width',type:'float',default:'0.8',desc:'Box width.'}],returns:{type:'Axes',desc:'Axes with boxplots drawn.'},example:`sns.<span class="fn">boxplot</span>(data=tips, x=<span class="st">'day'</span>, y=<span class="st">'total_bill'</span>)\nsns.<span class="fn">boxplot</span>(data=tips, x=<span class="st">'day'</span>, y=<span class="st">'total_bill'</span>, hue=<span class="st">'sex'</span>)\n\n<span class="cm"># Layer individual points on top</span>\nfig, ax = plt.<span class="fn">subplots</span>()\nsns.<span class="fn">boxplot</span>(data=tips, x=<span class="st">'day'</span>, y=<span class="st">'total_bill'</span>, ax=ax)\nsns.<span class="fn">stripplot</span>(data=tips, x=<span class="st">'day'</span>, y=<span class="st">'total_bill'</span>,\n              ax=ax, color=<span class="st">'black'</span>, alpha=<span class="nm">0.3</span>)`,notes:[{type:'tip',text:'Layer stripplot on top of boxplot to show distribution summary AND individual data points.'}],docUrl:'https://seaborn.pydata.org/generated/seaborn.boxplot.html'},
+'sns.pairplot':{sig:`seaborn.pairplot(data, *, hue=None, vars=None, kind='scatter', diag_kind='auto', corner=False, height=2.5, plot_kws=None, diag_kws=None)`,desc:'Plot pairwise relationships between all numeric columns. n×n grid — off-diagonal = scatter, diagonal = distribution.',params:[{name:'data',type:'DataFrame',req:true,desc:'Tidy DataFrame.'},{name:'hue',type:'str',default:'None',desc:'Color by this categorical column.'},{name:'vars',type:'list',default:'None',desc:'Subset of columns. Omit = all numeric.'},{name:'kind',type:'str',default:"'scatter'",desc:"Off-diagonal type: 'scatter','kde','hist','reg'."},{name:'corner',type:'bool',default:'False',desc:'Show lower triangle only.'}],returns:{type:'PairGrid',desc:'PairGrid for further customisation.'},example:`sns.<span class="fn">pairplot</span>(iris, hue=<span class="st">'species'</span>)\nsns.<span class="fn">pairplot</span>(df, hue=<span class="st">'group'</span>,\n    vars=[<span class="st">'col_a'</span>, <span class="st">'col_b'</span>],\n    diag_kind=<span class="st">'kde'</span>,\n    plot_kws={<span class="st">'alpha'</span>: <span class="nm">0.5</span>})`,notes:[{type:'warning',text:'Scales as O(n²) subplots — use vars= to restrict to ≤5 columns.'}],docUrl:'https://seaborn.pydata.org/generated/seaborn.pairplot.html'},
+'stats.ttest_ind':{sig:`scipy.stats.ttest_ind(a, b, equal_var=True, nan_policy='propagate', alternative='two-sided')`,desc:"Independent-samples t-test. Tests whether two groups have significantly different means. p < 0.05 → reject H₀.",params:[{name:'a, b',type:'array_like',req:true,desc:'Sample arrays.'},{name:'equal_var',type:'bool',default:'True',desc:"False = Welch's t-test (recommended)."},{name:'alternative',type:'str',default:"'two-sided'",desc:"'two-sided','less','greater'."},{name:'nan_policy',type:'str',default:"'propagate'",desc:"'propagate','raise','omit'."}],returns:{type:'TtestResult',desc:'(statistic, pvalue)'},example:`t, p = stats.<span class="fn">ttest_ind</span>(group_a, group_b)\n<span class="fn">print</span>(<span class="st">f't={t:.3f}, p={p:.4f}'</span>)\n<span class="kw">if</span> p < <span class="nm">0.05</span>: <span class="fn">print</span>(<span class="st">'Significant ✓'</span>)\n\n<span class="cm"># Welch's (safer default)</span>\nt, p = stats.<span class="fn">ttest_ind</span>(a, b, equal_var=<span class="kw">False</span>)`,notes:[{type:'info',text:"Use equal_var=False (Welch's) by default — robust to unequal variances."},{type:'warning',text:"Statistical significance ≠ practical significance. Report effect size (Cohen's d) too."}],docUrl:'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html'},
+'stats.pearsonr':{sig:`scipy.stats.pearsonr(x, y, *, alternative='two-sided')`,desc:'Pearson correlation coefficient measures linear association. Returns r ∈ [-1, 1] and p-value.',params:[{name:'x, y',type:'array_like',req:true,desc:'Same-length numeric arrays.'},{name:'alternative',type:'str',default:"'two-sided'",desc:"'two-sided','greater','less'."}],returns:{type:'PearsonRResult',desc:'(statistic=r, pvalue). |r|>0.7 strong, 0.5-0.7 moderate, <0.3 weak.'},example:`r, p = stats.<span class="fn">pearsonr</span>(x, y)\n<span class="fn">print</span>(<span class="st">f'r={r:.3f}, p={p:.4f}'</span>)\n\n<span class="cm"># Non-linear / ordinal → Spearman</span>\nrho, p = stats.<span class="fn">spearmanr</span>(x, y)`,notes:[{type:'info',text:'Pearson = linear correlation only. Use spearmanr for monotonic but non-linear relationships.'}],docUrl:'https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html'},
+'train_test_split':{sig:`sklearn.model_selection.train_test_split(*arrays, test_size=None, train_size=None, random_state=None, shuffle=True, stratify=None)`,desc:'Split data into random train and test subsets. Always set random_state for reproducibility.',params:[{name:'*arrays',type:'array-like',req:true,desc:'X, y (and any other arrays) to split.'},{name:'test_size',type:'float or int',default:'0.25',desc:'Proportion (0.2=20%) or absolute count.'},{name:'random_state',type:'int',default:'None',desc:'Seed for reproducible splits.'},{name:'stratify',type:'array-like',default:'None',desc:'Preserve class proportions — for imbalanced data.'}],returns:{type:'list',desc:'[X_train, X_test, y_train, y_test] (or more per input).'},example:`X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(\n    X, y,\n    test_size=<span class="nm">0.2</span>,\n    random_state=<span class="nm">42</span>,\n    stratify=y  <span class="cm"># ← for classification</span>\n)`,notes:[{type:'warning',text:'For time series, do NOT shuffle — split by time index to prevent data leakage.'},{type:'tip',text:'Fix random_state=42 during development for reproducible results.'}],docUrl:'https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html'},
+'plt.subplots':{sig:`matplotlib.pyplot.subplots(nrows=1, ncols=1, *, sharex=False, sharey=False, squeeze=True, width_ratios=None, height_ratios=None, **fig_kw)`,desc:'Create a figure and grid of subplots in one call. Returns (fig, ax). Standard starting point for nearly every Matplotlib figure.',params:[{name:'nrows / ncols',type:'int',default:'1',desc:'Grid dimensions.'},{name:'sharex / sharey',type:'bool or str',default:'False',desc:"Share axis ranges: True/'all', 'row', or 'col'."},{name:'figsize',type:'(w, h)',default:'None',desc:'Figure size in inches (pass via **fig_kw).'},{name:'width_ratios',type:'list',default:'None',desc:'Relative column widths.'}],returns:{type:'(Figure, Axes or ndarray)',desc:'fig and ax (or array of axes for multi-panel).'},example:`fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">10</span>, <span class="nm">5</span>))\n\n<span class="cm"># 2×3 grid</span>\nfig, axes = plt.<span class="fn">subplots</span>(<span class="nm">2</span>, <span class="nm">3</span>, figsize=(<span class="nm">15</span>, <span class="nm">8</span>), sharex=<span class="kw">True</span>)\n<span class="kw">for</span> ax <span class="kw">in</span> axes.<span class="fn">flat</span>:\n    ax.<span class="fn">set_title</span>(<span class="st">'Panel'</span>)\nplt.<span class="fn">tight_layout</span>()`,notes:[{type:'tip',text:'Always call plt.tight_layout() before plt.show() to prevent label overlap.'}],docUrl:'https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html'},
+'px.scatter':{sig:`plotly.express.scatter(data_frame=None, x=None, y=None, color=None, size=None, hover_data=None, trendline=None, facet_col=None, title=None, template=None)`,desc:'Interactive scatter plot. Fully interactive — zoom, pan, hover, legend-toggle — no extra code.',params:[{name:'data_frame',type:'DataFrame',req:true,desc:'Source DataFrame.'},{name:'x / y',type:'str',req:true,desc:'Column names for axes.'},{name:'color',type:'str',default:'None',desc:'Column for coloring points.'},{name:'size',type:'str',default:'None',desc:'Column for marker size.'},{name:'trendline',type:'str',default:'None',desc:"'ols','lowess','expanding' regression lines."},{name:'template',type:'str',default:'None',desc:"Theme: 'plotly_dark','ggplot2','simple_white'."}],returns:{type:'Figure',desc:'Interactive Plotly Figure.'},example:`fig = px.<span class="fn">scatter</span>(df, x=<span class="st">'price'</span>, y=<span class="st">'sales'</span>,\n    color=<span class="st">'region'</span>, size=<span class="st">'qty'</span>,\n    trendline=<span class="st">'ols'</span>, template=<span class="st">'plotly_dark'</span>)\nfig.<span class="fn">show</span>()\nfig.<span class="fn">write_html</span>(<span class="st">'chart.html'</span>)`,notes:[{type:'tip',text:"Use template='plotly_dark' for dark-themed dashboards."}],docUrl:'https://plotly.com/python-api-reference/generated/plotly.express.scatter.html'}
+};
+
+let CL=null,CF=null;
+const NK='pyref_notes_',CLK='pyref_custom_libs',CFN='pyref_custom_fns';
+
+function load(){
+  try{Object.assign(LIBS,JSON.parse(localStorage.getItem(CLK)||'{}'));Object.assign(FUNCTIONS,JSON.parse(localStorage.getItem(CFN)||'{}'));}catch(e){}
+}
+function saveCL(){const o={};Object.keys(LIBS).forEach(k=>{if(LIBS[k]._custom)o[k]=LIBS[k];});localStorage.setItem(CLK,JSON.stringify(o));}
+function saveCF(){const o={};Object.keys(FUNCTIONS).forEach(k=>{if(FUNCTIONS[k]._custom)o[k]=FUNCTIONS[k];});localStorage.setItem(CFN,JSON.stringify(o));}
+
+function renderSidebar(){
+  const g={};Object.entries(LIBS).forEach(([id,l])=>{if(!g[l.cat])g[l.cat]=[];g[l.cat].push({id,...l});});
+  let h='';
+  Object.entries(CATS).forEach(([cid,c])=>{
+    if(!g[cid])return;
+    h+=`<div class="sb-sec">${c.label}</div>`;
+    g[cid].forEach(l=>{
+      const cnt=Object.values(l.cats||{}).flat().length;
+      h+=`<button class="lb ${CL===l.id?'active':''}" style="--lc:${l.color}" onclick="selLib('${l.id}')"><div class="ldot"></div>${l.name}<span class="lbadge">${cnt}</span></button>`;
+    });
+  });
+  document.getElementById('sidebar').innerHTML=h;
+}
+
+function renderCatGrid(){
+  const el=document.getElementById('catGrid');if(!el)return;
+  const cnt={};Object.values(LIBS).forEach(l=>cnt[l.cat]=(cnt[l.cat]||0)+1);
+  el.innerHTML=Object.entries(CATS).filter(([id])=>cnt[id]).map(([id,c])=>`<div class="cc" style="--lc:${c.color}" onclick="selFirstLib('${id}')"><div class="cc-dot"></div><div class="cc-name">${c.label}</div><div class="cc-count">${cnt[id]} lib${cnt[id]>1?'raries':'rary'}</div></div>`).join('');
+}
+
+function selFirstLib(cid){const e=Object.entries(LIBS).find(([,l])=>l.cat===cid);if(e)selLib(e[0]);}
+
+function selLib(id){
+  CL=id;CF=null;
+  renderSidebar();renderFnList(id);renderLibOv(id);
+}
+
+function renderFnList(id){
+  const l=LIBS[id];if(!l)return;
+  const clr=l.color;
+  let h=`<div class="fl-head"><div class="fl-title" style="color:${clr}">${l.name}</div><div class="imp-chip" onclick="showImp('${id}')">↓ import</div></div>`;
+  Object.entries(l.cats||{}).forEach(([cat,fns])=>{
+    h+=`<div class="fc-label">${cat}</div>`;
+    fns.forEach(fn=>{
+      const has=!!FUNCTIONS[fn];
+      h+=`<button class="fi ${CF===fn?'active':''}" data-fn="${fn}" onclick="selFn('${fn}')"><div class="fdot" style="background:${has?'#86efac':'#1e2d45'}" title="${has?'Documented':'No inline doc'}"></div>${fn}</button>`;
+    });
+  });
+  document.getElementById('fnList').innerHTML=h;
+}
+
+function renderLibOv(id){
+  const l=LIBS[id];const clr=l.color;
+  const dc=Object.values(l.cats||{}).flat().filter(f=>FUNCTIONS[f]).length;
+  const tc=Object.values(l.cats||{}).flat().length;
+  let cards='';
+  Object.entries(l.cats||{}).forEach(([cat,fns])=>{
+    cards+=`<div class="fov" style="border-color:var(--border)" onmouseover="this.style.borderColor='${clr}'" onmouseout="this.style.borderColor='var(--border)'"><div class="fov-cat" style="color:${clr}">${cat}</div>`;
+    fns.forEach(fn=>{
+      const d=FUNCTIONS[fn];
+      cards+=`<div style="display:flex;align-items:flex-start;gap:5px;padding:3px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="selFn('${fn}')"><div class="fdot" style="background:${d?'#86efac':'#1e2d45'};margin-top:5px;flex-shrink:0;width:5px;height:5px;border-radius:50%"></div><div><div class="fov-fn">${fn}</div>${d?`<div class="fov-desc">${d.desc.slice(0,60)}…</div>`:`<div class="fov-nd">Click → external docs</div>`}</div></div>`;
+    });
+    cards+='</div>';
+  });
+  document.getElementById('content').innerHTML=`<div class="ci">
+    <div class="loh">
+      <div class="lo-dot" style="background:${clr}"></div>
+      <div class="lo-name">${l.name}</div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <span style="font-size:.68rem;color:var(--text2);background:var(--s3);padding:3px 9px;border-radius:4px">${dc}/${tc} documented</span>
+        <a href="${l.docs}" target="_blank" class="ext-link p">Official Docs ↗</a>
+      </div>
+    </div>
+    <div class="lo-desc">${l.desc}</div>
+    <div class="imp-block">${l.imports.map(i=>i.startsWith('#')?`<span class="cm">${i}</span>`:i.replace(/\bimport\b/g,'<span class="kw">import</span>').replace(/\bfrom\b/g,'<span class="kw">from</span>')).join('<br>')}</div>
+    <div class="sh">All Functions</div>
+    <div class="fn-ov-grid">${cards}</div>
+    <div style="height:40px"></div>
+  </div>`;
+}
+
+function selFn(fn){
+  CF=fn;renderFnList(CL);
+  const d=FUNCTIONS[fn];
+  const l=LIBS[CL];
+  const clr=l?l.color:'#00d4ff';
+  const nk=NK+fn.replace(/[^a-z0-9]/gi,'_');
+  const note=localStorage.getItem(nk)||'';
+  const parts=fn.split('.');const lp=parts.slice(0,-1).join('.');const np=parts[parts.length-1];
+
+  if(!d){
+    document.getElementById('content').innerHTML=`<div class="ci">
+      <div class="breadcrumb"><span>${l?l.name:CL}</span> › ${fn}</div>
+      <div class="fn-name" style="color:var(--text3)">${fn}</div>
+      <div class="tabs"><button class="tab-btn active" onclick="swTab(this,'docs')">Documentation</button><button class="tab-btn" onclick="swTab(this,'notes')">My Notes</button></div>
+      <div class="tab-p active" id="tab-docs">
+        <div class="nd-box"><p>Inline docs not yet available for <code style="font-family:'IBM Plex Mono',monospace;color:${clr}">${fn}</code>. Visit official docs.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a href="${l?l.docs:'#'}" target="_blank" class="ext-link p">Official ${l?l.name:''} Docs ↗</a><a href="https://stackoverflow.com/search?q=${encodeURIComponent(fn+' python')}" target="_blank" class="ext-link s">Stack Overflow ↗</a></div></div>
+        <button class="save-btn" style="border:1px dashed var(--border2);background:none;color:var(--text2)" onclick="openAddFnFor('${fn}')">+ Add documentation for this function</button>
+      </div>
+      <div class="tab-p" id="tab-notes"><p style="color:var(--text2);font-size:.76rem;margin-bottom:10px;line-height:1.6">Add personal notes for <code style="color:${clr};font-family:'IBM Plex Mono',monospace">${fn}</code>.</p><textarea class="notes-area" id="nA" placeholder="Your notes…">${note}</textarea><div class="save-row"><button class="save-btn" onclick="saveNote('${nk}')">Save Note</button><span class="save-ok" id="sOk">✓ Saved</span></div></div>
+      <div style="height:40px"></div>
+    </div>`;
+    return;
+  }
+
+  const pHtml=d.params&&d.params.length?`<div class="sh">Parameters</div><table class="ptbl"><thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${d.params.map(p=>`<tr><td class="pn">${p.name}${p.req?'<span class="req">required</span>':''}</td><td class="pt">${p.type||'—'}</td><td class="pd2">${p.default||'—'}</td><td class="pdesc">${p.desc}</td></tr>`).join('')}</tbody></table>`:'';
+  const rHtml=d.returns?`<div class="sh">Returns</div><div class="ret-box"><div class="ret-type">${d.returns.type}</div><div class="ret-desc">${d.returns.desc}</div></div>`:'';
+  const nHtml=(d.notes||[]).length?`<div class="sh">Notes</div>${d.notes.map(n=>`<div class="note ${n.type==='tip'?'ntip':n.type==='warning'?'nwarn':'ninfo'}"><span style="flex-shrink:0">${n.type==='tip'?'💡':n.type==='warning'?'⚠️':'ℹ️'}</span><span>${n.text}</span></div>`).join('')}`:'';
+  const eHtml=d.example?`<div class="sh">Code Example</div><div class="code-wrap"><div class="code-head"><span>python</span><button class="copy-btn" onclick="cpCode(this)">Copy</button></div><div class="code-body">${d.example}</div></div>`:'';
+
+  document.getElementById('content').innerHTML=`<div class="ci">
+    <div class="breadcrumb"><span>${l?l.name:CL}</span> › ${fn}</div>
+    <div class="fn-name"><span class="lp" style="color:${clr}">${lp?lp+'.':''}</span>${np}</div>
+    <div class="sig-box"><pre><span style="color:${clr}">${d.sig.split('(')[0]}</span><span style="color:var(--text2)">(${d.sig.split('(').slice(1).join('(')}</span></pre></div>
+    <div class="desc-box" style="border-left-color:${clr}">${d.desc}</div>
+    <div class="links-row">
+      <a href="${d.docUrl}" target="_blank" class="ext-link p">Official Documentation ↗</a>
+      <a href="https://stackoverflow.com/search?q=${encodeURIComponent(fn+' python')}" target="_blank" class="ext-link s">Stack Overflow ↗</a>
+      <a href="https://github.com/search?q=${encodeURIComponent(fn)}&type=code" target="_blank" class="ext-link s">GitHub Examples ↗</a>
+    </div>
+    <div class="tabs"><button class="tab-btn active" onclick="swTab(this,'docs')">Documentation</button><button class="tab-btn" onclick="swTab(this,'notes')">✏ My Notes</button></div>
+    <div class="tab-p active" id="tab-docs">${pHtml}${rHtml}${nHtml}${eHtml}</div>
+    <div class="tab-p" id="tab-notes">
+      <p style="color:var(--text2);font-size:.76rem;margin-bottom:10px;line-height:1.6">Personal notes for <code style="color:${clr};font-family:'IBM Plex Mono',monospace">${fn}</code> — saved locally in your browser.</p>
+      <textarea class="notes-area" id="nA" placeholder="e.g. 'Use center=0 for correlation matrices', 'Remember random_state=42'…">${note}</textarea>
+      <div class="save-row"><button class="save-btn" onclick="saveNote('${nk}')">Save Note</button><span class="save-ok" id="sOk">✓ Saved</span></div>
+    </div>
+    <div style="height:40px"></div>
+  </div>`;
+}
+
+function swTab(btn,tab){
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-p').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('tab-'+tab);if(p)p.classList.add('active');
+}
+
+function saveNote(k){
+  const a=document.getElementById('nA');if(!a)return;
+  localStorage.setItem(k,a.value);
+  const s=document.getElementById('sOk');if(s){s.classList.add('show');setTimeout(()=>s.classList.remove('show'),2000);}
+}
+
+function cpCode(btn){
+  const b=btn.closest('.code-wrap').querySelector('.code-body');
+  navigator.clipboard.writeText(b.innerText).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});
+}
+
+function showImp(id){
+  const l=LIBS[id];
+  document.getElementById('impTitle').textContent=`Import — ${l.name}`;
+  document.getElementById('impCode').innerHTML=l.imports.map(i=>i.startsWith('#')?`<span class="cm">${i}</span>`:i.replace(/\bimport\b/g,'<span class="kw">import</span>').replace(/\bfrom\b/g,'<span class="kw">from</span>')).join('<br>');
+  document.getElementById('impOv').classList.add('open');
+}
+function closeImp(){document.getElementById('impOv').classList.remove('open');}
+
+function openAddLib(){document.getElementById('addLibOv').classList.add('open');}
+function closeAddLib(){document.getElementById('addLibOv').classList.remove('open');}
+function submitAddLib(){
+  const name=document.getElementById('nlName').value.trim();
+  const cat=document.getElementById('nlCat').value;
+  const desc=document.getElementById('nlDesc').value.trim();
+  const imps=document.getElementById('nlImps').value.trim();
+  const url=document.getElementById('nlUrl').value.trim();
+  if(!name){alert('Library name required.');return;}
+  const id=name.toLowerCase().replace(/\s+/g,'_');
+  LIBS[id]={name,cat,color:CATS[cat]?.color||'#64748b',desc:desc||'Custom library.',imports:imps?imps.split('\n').filter(Boolean):['import '+id],docs:url||'#',cats:{'Functions':[]},_custom:true};
+  saveCL();
+  ['nlName','nlDesc','nlImps','nlUrl'].forEach(i=>document.getElementById(i).value='');
+  closeAddLib();renderSidebar();renderCatGrid();buildIdx();selLib(id);
+}
+
+function openAddFn(){populateSel();document.getElementById('addFnOv').classList.add('open');}
+function openAddFnFor(fn){populateSel();document.getElementById('nfName').value=fn;document.getElementById('addFnOv').classList.add('open');}
+function closeAddFn(){document.getElementById('addFnOv').classList.remove('open');}
+function populateSel(){document.getElementById('nfLib').innerHTML=Object.entries(LIBS).map(([id,l])=>`<option value="${id}" ${id===CL?'selected':''}>${l.name}</option>`).join('');}
+function submitAddFn(){
+  const lid=document.getElementById('nfLib').value;
+  const cat=document.getElementById('nfCat').value.trim()||'Functions';
+  const name=document.getElementById('nfName').value.trim();
+  const sig=document.getElementById('nfSig').value.trim();
+  const desc=document.getElementById('nfDesc').value.trim();
+  const code=document.getElementById('nfCode').value.trim();
+  const url=document.getElementById('nfUrl').value.trim();
+  if(!name){alert('Function name required.');return;}
+  FUNCTIONS[name]={sig:sig||name+'()',desc:desc||'No description provided.',params:[],returns:{type:'—',desc:'See official documentation.'},example:code||'# no example provided',docUrl:url||LIBS[lid]?.docs||'#',_custom:true};
+  if(!LIBS[lid].cats[cat])LIBS[lid].cats[cat]=[];
+  if(!LIBS[lid].cats[cat].includes(name))LIBS[lid].cats[cat].push(name);
+  saveCF();
+  ['nfCat','nfName','nfSig','nfDesc','nfCode','nfUrl'].forEach(i=>document.getElementById(i).value='');
+  closeAddFn();buildIdx();renderFnList(lid);selFn(name);
+}
+
+// SEARCH
+let IDX=[];
+function buildIdx(){
+  IDX=[];
+  Object.entries(LIBS).forEach(([lid,l])=>{
+    Object.values(l.cats||{}).flat().forEach(fn=>{
+      IDX.push({fn,lid,lname:l.name,lcolor:l.color,desc:FUNCTIONS[fn]?.desc||''});
+    });
+  });
+}
+const sIn=document.getElementById('sIn');
+const sDrop=document.getElementById('sDrop');
+sIn.addEventListener('input',()=>{
+  const q=sIn.value.trim().toLowerCase();
+  if(!q){sDrop.classList.remove('open');return;}
+  const hits=IDX.filter(i=>i.fn.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q)).slice(0,10);
+  if(!hits.length){sDrop.classList.remove('open');return;}
+  sDrop.innerHTML=hits.map(h=>`<div class="si-item" onclick="selLib('${h.lid}');selFn('${h.fn}');sIn.value='';sDrop.classList.remove('open')"><span class="si-lib" style="background:${h.lcolor}22;color:${h.lcolor}">${h.lname}</span><span class="si-fn">${h.fn}</span><span class="si-desc">${h.desc.slice(0,45)}</span></div>`).join('');
+  sDrop.classList.add('open');
+});
+document.addEventListener('click',e=>{if(!document.getElementById('sWrap').contains(e.target))sDrop.classList.remove('open');});
+
+load();renderSidebar();renderCatGrid();buildIdx();
+</script>
+</body>
+</html>
